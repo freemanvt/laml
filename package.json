@@ -1,15 +1,29 @@
 {
-  "name": "lamf",
-  "version": "1.0.0",
+  "name": "laml",
+  "version": "0.0.10",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "lint": "jshint **/*js",
+    "lint": "./node_modules/jshint/bin/jshint **/*js || true",
     "test": "./node_modules/mocha/bin/mocha test/*.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freemanvt/laml"
+  },
+  "keywords": [
+    "api management",
+    "microservices",
+    "api",
+    "soa",
+    "web services",
+    "soap",
+    "rest",
+    "webservices",
+    "proxy"
+  ],
+  "author": "Nai Vinh Ta",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
@@ -20,7 +34,11 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "jshint": "^2.9.1",
     "mocha": "^2.3.4",
     "supertest": "^1.1.0"
+  },
+  "engines": {
+    "node": "5.4.1"
   }
 }

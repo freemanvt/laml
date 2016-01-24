@@ -1,8 +1,10 @@
 /**
+ * Example filter
+ *
  * Created by vinhta on 21/01/2016.
  */
 
-var logger = require('./../logger');
+var logger = require('./../lib/logger');
 
 var self = exports = module.exports = {};
 
@@ -11,10 +13,11 @@ var self = exports = module.exports = {};
  *
  * @param req
  * @param res
- * @param next
+ * @param body
+ * @param reqContext
  */
-self.filter = function (req, res, next) {
+self.filter = function (req, res, body, reqContext) {
 	logger.debug('invoking ApiKeyValidationFilter');
 	logger.debug('req.path', req.path);
-}
+};
 
