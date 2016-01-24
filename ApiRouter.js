@@ -7,10 +7,15 @@ var ApiProxy = require('./ApiProxy');
 var logger = require('./logger');
 var _ = require('lodash');
 
-function ApiRouter () {
+function ApiRouter (apiProxies) {
 	this.apiProxies = {};
-	var apiProxy = new ApiProxy();
-	this.apiProxies[apiProxy.config.basePath] = apiProxy;
+	// loop through all the api proxies and create an APIProxy object
+	_.each(apiProxies, apiProxyConfig => {
+		var apiProxy = new ApiProxy(apiProxyConfig);
+		this.apiProxies[apiProxy.config.basePath] = apiProxy;
+		logger.info('loaded api proxy [' + apiProxy.config.name + ']');
+	});
+
 }
 
 /**
@@ -29,4 +34,4 @@ ApiRouter.prototype.getApiProxy = function (basePath) {
 	return apiProxy;
 };
 
-module.exports = new ApiRouter();
+module.exports = ApiRouter;

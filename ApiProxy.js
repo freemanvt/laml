@@ -11,16 +11,16 @@ var request = require('request');
 var RequestResponseFlow = require('./RequestResponseFlow');
 var _ = require('lodash');
 var filterhelper = require('./lib/filterhelper');
+var zlib = require('zlib');
 
-
-function ApiProxy() {
+function ApiProxy(apiProxyConfig) {
     this.config = {
-        name : 'httpbin-demo',
-        basePath : '/v1/httpbin',
-	    requestFilters : ['ApiKeyValidationFilter','AddQueryParameter'],
-	    responseFilters : ['ExampleResponseFilter.js'],
+        name : apiProxyConfig.name,
+        basePath : apiProxyConfig.basePath,
+	    requestFilters : apiProxyConfig.requestFilters,
+	    responseFilters : apiProxyConfig.responseFilters,
 	    userFlows : {},
-        targetServer : 'https://httpbin.org'
+        targetServer : apiProxyConfig.targetServer
     };
 
 
@@ -35,8 +35,11 @@ function ApiProxy() {
 	filterhelper.loadFilters(this.config.responseFilters, this.responseFilters);
 
 	// load the user flows
-	var userFlow = new RequestResponseFlow();
-	this.config.userFlows[userFlow.config.matchPath] = userFlow;
+	_.each(apiProxyConfig.userFlows, userFlowConfig => {
+		var userFlow = new RequestResponseFlow(userFlowConfig);
+		this.config.userFlows[userFlow.config.matchPath] = userFlow;
+	});
+
 
 }
 
@@ -93,10 +96,22 @@ ApiProxy.prototype.invoke = function(req, res, next) {
 	}
 
 	// get query if available
-	options.qs = '';
+	if (req.query) {
+		options.qs = req.query;
+	}
+
+	// handle compressed response, by default request doesn't, see https://github.com/request/request#requestoptions-callback
+	options.gzip = true;
 
 	request(options, (error, response, body) => {
+		if (error)  {
+			logger.error(error);
+			return res.setStatus(500).end();
+		}
+
 		logger.debug('response body', body);
+
+
 		// iterate through target server response header and set it in the response back to the client
 		// this also allow us to perform custom set headers if we need to
 		_.each(_.keys(response.headers), key => {
@@ -111,7 +126,18 @@ ApiProxy.prototype.invoke = function(req, res, next) {
 
 		// run default response filters
 		filterhelper.runFilters(this.responseFilters, req, res, next);
-		res.send(body);
+		// if content type is gzip, we should send back a gzip
+		var encoding = response.headers['content-encoding'];
+		if (encoding == 'gzip') {
+			var buf = new Buffer(body, 'utf-8');   // Choose encoding for the string.
+			zlib.gzip(buf, function (_, result) {  // The callback will give you the
+				res.end(result);                     // result, so just send it.
+			});
+		} else {
+			res.send(body);
+		}
+
+
 	});
 };
 

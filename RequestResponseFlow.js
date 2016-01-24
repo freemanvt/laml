@@ -18,12 +18,12 @@ var request = require('request');
 var _ = require('lodash');
 var filterhelper = require('./lib/filterhelper');
 
-function RequestResponseFlow() {
+function RequestResponseFlow(userFlowConfig) {
 	this.config = {
-		name : 'example user defined flow',
-		matchPath : '/get',
-		requestFilters : ['ExampleUserFilter.js'],
-		responseFilters : ['ExampleUserFilter.js']
+		name : userFlowConfig.name,
+		matchPath : userFlowConfig.matchPath,
+		requestFilters : userFlowConfig.requestFilters,
+		responseFilters : userFlowConfig.responseFilters
 	};
 
 
