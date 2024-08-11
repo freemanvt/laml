@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "lint": "./node_modules/jshint/bin/jshint **/*js || true",
-    "test": "./node_modules/mocha/bin/mocha test/*.js"
+    "test": "./node_modules/mocha/bin/mocha test/*.js",
+    "dev": "VVLOGGER=winston nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -27,8 +28,8 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
-    "lodash": "^4.0.0",
     "multer": "^1.1.0",
+    "nodemon": "^3.1.4",
     "request": "^2.67.0",
     "winston": "^2.1.1"
   },
@@ -39,6 +40,6 @@
     "supertest": "^1.1.0"
   },
   "engines": {
-    "node": "5.4.1"
+    "node": "^18.16.0"
   }
 }

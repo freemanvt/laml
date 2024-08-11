@@ -9,9 +9,7 @@
  *
  * @constructor
  */
-function NoLogger() {
-
-}
+function NoLogger() {}
 
 NoLogger.prototype.debug = function() {};
 NoLogger.prototype.info = function() {};

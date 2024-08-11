@@ -3,9 +3,9 @@
  *
  * Created by vinhta on 21/01/2016.
  */
-var logger = require('./../lib/logger');
+const logger = require('./../lib/logger');
 
-var self = exports = module.exports = {};
+const self = exports = module.exports = {};
 
 /**
  * filter the request and call next
@@ -16,5 +16,6 @@ var self = exports = module.exports = {};
  * @param reqContext
  */
 self.filter = function (req, res, body, reqContext) {
-	logger.debug('invoking ExampleResponseFilter');
+	logger.debug('invoking AddQueryParameter');
+	logger.debug('req.path', req.path);
 };
