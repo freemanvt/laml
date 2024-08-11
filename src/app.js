@@ -3,16 +3,16 @@
  *
  * Created by vinhta on 13/01/2016.
  */
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var multer = require('multer');
-var ApiRouter = require('./lib/ApiRouter');
-var logger = require('./lib/logger');
-var proxyDao = require('./lib/dao/apiproxydao');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const ApiRouter = require('./lib/ApiRouter');
+const logger = require('./lib/logger');
+const proxyDao = require('./lib/dao/apiproxydao');
 
 // run configuration
-var apiRouter = new ApiRouter(proxyDao.getApiProxies());
+const apiRouter = new ApiRouter(proxyDao.getApiProxies());
 
 app.use(bodyParser.json()); // support json encoded bodies
 //app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -21,7 +21,7 @@ app.use(bodyParser.raw({ // we want the full body as raw byte
 }));
 
 // Security filter
-var authenticateHeader = function (req, res, next) {
+const authenticateHeader = function (req, res, next) {
     next();
 };
 
@@ -31,9 +31,9 @@ app.use( (req, res, next) => {
 	if (req.path === '/favicon.ico') {
 		return res.end();
 	} else {
-		var apiProxy = apiRouter.getApiProxy(req.path);
+		const apiProxy = apiRouter.getApiProxy(req.path);
 		if (apiProxy) {
-			var reqContext = {};
+			const reqContext = {};
 			apiProxy.invoke(req, res, next, reqContext);
 		} else {
 			return res.status(404).send('No such URL [' + req.path + ']');

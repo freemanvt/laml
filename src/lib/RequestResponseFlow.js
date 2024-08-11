@@ -11,12 +11,8 @@
  *
  * Created by vinhta on 22/01/2016.
  */
-'use strict';
 
-var logger = require('./logger');
-var request = require('request');
-var _ = require('lodash');
-var filterhelper = require('./filterhelper');
+const filterhelper = require('./filterhelper');
 
 function RequestResponseFlow(userFlowConfig) {
 	this.config = {

@@ -3,10 +3,9 @@
  *
  * Created by vinhta on 21/01/2016.
  */
+const logger = require('./../lib/logger');
 
-var logger = require('./../lib/logger');
-
-var self = exports = module.exports = {};
+const self = exports = module.exports = {};
 
 /**
  * filter the request and call next
@@ -17,7 +16,5 @@ var self = exports = module.exports = {};
  * @param reqContext
  */
 self.filter = function (req, res, body, reqContext) {
-	logger.debug('invoking ApiKeyValidationFilter');
-	logger.debug('req.path', req.path);
+	logger.debug('invoking ExampleResponseFilter');
 };
-

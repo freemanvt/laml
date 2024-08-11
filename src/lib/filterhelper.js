@@ -11,11 +11,9 @@
  *
  * Created by vinhta on 22/01/2016.
  */
-var logger = require('./logger');
+const filter = exports = module.exports = {};
 
-var filter = exports = module.exports = {};
-
-var _FILTERS_DIR = 'filters';
+const _FILTERS_DIR = 'filters';
 
 /**
  * load the filters
@@ -47,7 +45,6 @@ filter.loadFilters = function(toLoad, loadTo) {
  *      request Context that holds information for the current request
  */
 filter.runFilters = function(filters, req, res, body, reqContext) {
-	logger.debug('runing filters');
 	filters.forEach(filter => {
 		// each filter must provide a filter function that
 		filter.filter(req, res, body, reqContext);

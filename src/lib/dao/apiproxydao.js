@@ -3,9 +3,7 @@
  *
  * Created by vinhta on 23/01/2016.
  */
-var logger = require('./../logger');
-
-var dao = exports = module.exports = {};
+const dao = exports = module.exports = {};
 
 /**
  * hard coding the test proxy configuration, ideally this should be read from the file system or a database.
@@ -27,7 +25,8 @@ var apiProxies = [
 							responseFilters : ['ExampleUserFilter.js'] // filters to run during the user response flow
 						}
 					],
-		targetServer : 'https://httpbin.org' // this is the target endpoint you are wrapping
+		targetServer : 'https://httpbin.org', // this is the target endpoint you are wrapping
+		description: 'httpbin test endpoint, resend request to http://localhost:8000/v1/httpbin/get'
 	},
 	// target server example http://weather.yahooapis.com/forecastrss?p=94089
 	{

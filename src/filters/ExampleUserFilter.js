@@ -3,9 +3,9 @@
  *
  * Created by vinhta on 21/01/2016.
  */
-var logger = require('./../lib/logger');
+const logger = require('./../lib/logger');
 
-var self = exports = module.exports = {};
+const self = exports = module.exports = {};
 
 /**
  * filter the request and call next
