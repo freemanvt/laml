@@ -1,5 +1,4 @@
-![node-js]
-(https://github.com/freemanvt/laml/actions/workflows/node.js.yml/badge.svg)
+![node-js-ci](https://github.com/freemanvt/laml/actions/workflows/node.js.yml/badge.svg)
 
 # LAML
 Lightweight API Management Layer provides a framework that allows you to create API proxies wrapping your backend APIs or Micro Services.
