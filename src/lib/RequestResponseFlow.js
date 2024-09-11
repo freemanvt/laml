@@ -14,24 +14,26 @@
 
 const filterhelper = require('./filterhelper');
 
-function RequestResponseFlow(userFlowConfig) {
-	this.config = {
-		name : userFlowConfig.name,
-		matchPath : userFlowConfig.matchPath,
-		requestFilters : userFlowConfig.requestFilters,
-		responseFilters : userFlowConfig.responseFilters
-	};
+class RequestResponseFlow {
+	constructor(userFlowConfig) {
+		this.config = {
+			name: userFlowConfig.name,
+			matchPath: userFlowConfig.matchPath,
+			requestFilters: userFlowConfig.requestFilters,
+			responseFilters: userFlowConfig.responseFilters
+		};
 
 
-	this.requestFilters = []; // will be executed left to right
-	this.responseFilters = [];
+		this.requestFilters = []; // will be executed left to right
+		this.responseFilters = [];
 
 
-	// load all the request filters
-	filterhelper.loadFilters(this.config.requestFilters, this.requestFilters);
+		// load all the request filters
+		filterhelper.loadFilters(this.config.requestFilters, this.requestFilters);
 
-	// load all the response filters
-	filterhelper.loadFilters(this.config.responseFilters, this.responseFilters);
+		// load all the response filters
+		filterhelper.loadFilters(this.config.responseFilters, this.responseFilters);
+	}
 }
 
 module.exports = RequestResponseFlow;

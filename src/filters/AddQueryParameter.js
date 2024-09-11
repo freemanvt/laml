@@ -14,8 +14,16 @@ const self = exports = module.exports = {};
  * @param res
  * @param body
  * @param reqContext
+ * @param filterConfig
+ * @param 
  */
-self.filter = function (req, res, body, reqContext) {
+self.filter = function (req, res, body, reqContext, filterConfig, next) {
 	logger.debug('invoking AddQueryParameter');
+	logger.debug('config', filterConfig && JSON.stringify(filterConfig))
 	logger.debug('req.path', req.path);
+	const queryParamsToAdd = filterConfig.params;
+	queryParamsToAdd.forEach(param => {
+		req.query[param.key] = param.value;
+	});
+	next();
 };

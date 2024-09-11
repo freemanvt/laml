@@ -3,8 +3,8 @@
  *
  * Created by vinhta on 13/01/2016.
  */
-const app = require('./app');
-const logger = require('./lib/logger');
+import app from './app.mjs';
+import logger from './lib/logger.js';
 
 const _PORT = 8000;
 
