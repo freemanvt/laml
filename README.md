@@ -68,7 +68,9 @@ To run without database
 
 ## Creating New API Proxy
 
-TBA
+API Proxy are wrappers around your API. Your API can be any type of API such as REST, SOAP, GraphQL etc.
+
+API Proxy allows you to add filters to the request and response message.
 
 ## Creating New Filters
 
