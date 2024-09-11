@@ -49,6 +49,8 @@ Or you can install the sql scripts in the db/scripts folder.
 
 After creating the Schema, you need to insert the ref data from /db/scripts/002_ref-data.sql
 
+WARNING: the code here uses default username and simpe password for local dev. Please use proper password management if you using this anywhere else.
+
 ## To Run
 
 Start the redis server and database using docker compose
