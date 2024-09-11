@@ -3,8 +3,9 @@
  *
  * Created by vinhta on 20/01/2016.
  */
-const logger = require('./logger');
 const request = require('request');
+const logger = require('./logger');
+const ApiError = require('./ApiError');
 const RequestResponseFlow = require('./RequestResponseFlow');
 const filterhelper = require('./filterhelper');
 const zlib = require('zlib');
@@ -25,14 +26,23 @@ class ApiProxy {
 		// load all the response filters
 		filterhelper.loadFilters(this.config.responseFilters, this.responseFilters);
 
-		// load the user flows
 		apiProxyConfig.userFlows.forEach(userFlowConfig => {
+			logger.debug('userFlow', JSON.stringify(userFlowConfig, null, 2))
 			const userFlow = new RequestResponseFlow(userFlowConfig);
 			this.config.userFlows[userFlow.config.matchPath] = userFlow;
 		});
+		logger.debug('loaded user flow', JSON.stringify(this.config.userFlows, null, 2));
 	}
 
 	getConfig = () => this.config;
+
+	getUserFlowToRunByPath = (path) => {
+		const correctKey = Object.keys(this.config.userFlows).find(key => path.indexOf(key) === 0);
+		if (correctKey) {
+			return this.config.userFlows[correctKey];
+		}
+		return  null;
+	}
 
 	/**
 	 * invoke the request against the target server
@@ -42,9 +52,27 @@ class ApiProxy {
 	 * @param next
 	 * @param reqContext
 	 */
-	invoke(req, res, next, reqContext) {
+	async invoke(req, res, next, reqContext) {
 		logger.debug('running request filters');
-		filterhelper.runFilters(this.requestFilters, req, res, req.body, reqContext);
+		const flowState = {
+			nextStatus: false,
+			endStatus: false,
+			next: () => flowState.nextStatus = true,
+			reset: () => flowState.nextStatus = false,
+			end: () => flowState.endStatus = true,
+		};
+
+		await filterhelper.runFilters(this.requestFilters, req, res, req.body, reqContext, flowState);
+		if (flowState.endStatus) { //check if we should end this request here
+			// don't continue
+			// TODO: there might be times when we want to continue, need to think about
+			//check if a response has been sent by the filter
+			if (!res.headersSent) {
+				throw new ApiError(500, 'OOPS SOMETHING WENT WRONG VV, RESPONSE HASN\'T BEEN SENT BY THE FILTER THAT ENDED THE REQUEST'); // TODO: clean up error responses
+			}
+			return;
+		}
+
 		logger.debug('calling target server', this.config.targetServer);
 		logger.debug('method', req.method);
 		logger.debug('header', req.headers);
@@ -55,12 +83,22 @@ class ApiProxy {
 		logger.debug('restOfPath', restOfPath);
 
 		// check if there's a user flow that matches the restOfPath
-		const userFlowToRun = Object.values(this.config.userFlows).find(key => restOfPath.indexOf(key) === 0);
+		const userFlowToRun = this.getUserFlowToRunByPath(restOfPath);
+		logger.debug('userFlows', userFlowToRun)
 
 		// run the user request flow
 		if (userFlowToRun) {
 			logger.debug('running user request filters');
-			filterhelper.runFilters(userFlowToRun.requestFilters, req, res, req.body, reqContext);
+			await filterhelper.runFilters(userFlowToRun.requestFilters, req, res, req.body, reqContext, flowState);
+			if (flowState.endStatus) { //check if we should end this request here
+				// don't continue
+				// TODO: there might be times when we want to continue, need to think about
+				//check if a response has been sent by the filter
+				if (!res.headersSent) {
+					throw new ApiError(500, 'OOPS SOMETHING WENT WRONG VV, RESPONSE HASN\'T BEEN SENT BY THE USER FILTER THAT ENDED THE REQUEST'); // TODO: clean up error responses
+				}
+				return;
+			}
 		}
 
 		// create options for request
@@ -76,6 +114,9 @@ class ApiProxy {
 				options.headers[key] = req.headers[key];
 		});
 
+		console.log('hereer2e')
+
+
 		logger.debug('option.headers', options.headers);
 
 		if (req.method === 'POST') {
@@ -90,7 +131,7 @@ class ApiProxy {
 		// handle compressed response, by default request doesn't, see https://github.com/request/request#requestoptions-callback
 		options.gzip = true;
 
-		request(options, (error, response, body) => {
+		request(options, async (error, response, body) => {
 			if (error)  {
 				logger.error(error);
 				return res.status(500).end();
@@ -108,12 +149,12 @@ class ApiProxy {
 			// run the user response flow filters
 			if (userFlowToRun) {
 				logger.debug('running user response filters');
-				filterhelper.runFilters(userFlowToRun.responseFilters, req, res, body, reqContext);
+				await filterhelper.runFilters(userFlowToRun.responseFilters, req, res, body, reqContext, flowState);
 			}
 
 			// run default response filters
 			logger.debug('running default response filters');
-			filterhelper.runFilters(this.responseFilters, req, res, body, reqContext);
+			filterhelper.runFilters(this.responseFilters, req, res, body, reqContext, flowState);
 			// if content type is gzip, we should send back a gzip
 			var encoding = response.headers['content-encoding'];
 			if (encoding == 'gzip') {

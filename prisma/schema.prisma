@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model api_filters {
+  api_filter_id     Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(255)
+  description       String?             @db.VarChar(255)
+  created_at        DateTime            @db.Timestamp(6)
+  last_updated      DateTime            @db.Timestamp(6)
+  api_proxy_filters api_proxy_filters[]
+}
+
+model api_proxies {
+  api_proxy_id      Int                 @id @default(autoincrement())
+  uuid              String              @unique @db.VarChar(50)
+  name              String              @db.VarChar(50)
+  basepath          String              @db.VarChar(255)
+  target_server     String              @db.VarChar(255)
+  description       String?             @db.VarChar(255)
+  created_at        DateTime            @db.Timestamp(6)
+  last_updated      DateTime            @db.Timestamp(6)
+  api_proxy_filters api_proxy_filters[]
+  api_user_flows    api_user_flows[]
+}
+
+model api_proxy_filter_types {
+  api_proxy_filter_type_id Int                 @id @default(autoincrement())
+  name                     String              @unique @db.VarChar(50)
+  description              String?             @db.VarChar(255)
+  created_at               DateTime            @db.Timestamp(6)
+  last_updated             DateTime            @db.Timestamp(6)
+  api_proxy_filters        api_proxy_filters[]
+}
+
+model api_proxy_filters {
+  api_proxy_filters_id     Int                     @id @default(autoincrement())
+  api_proxy_id             Int?
+  api_user_flow_id         Int?
+  api_filter_id            Int?
+  api_proxy_filter_type_id Int?
+  position                 Int?
+  config_json              String?
+  created_at               DateTime                @db.Timestamp(6)
+  last_updated             DateTime                @db.Timestamp(6)
+  api_filters              api_filters?            @relation(fields: [api_filter_id], references: [api_filter_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_api_filters")
+  api_proxies              api_proxies?            @relation(fields: [api_proxy_id], references: [api_proxy_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_api_proxies")
+  api_proxy_filter_types   api_proxy_filter_types? @relation(fields: [api_proxy_filter_type_id], references: [api_proxy_filter_type_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_api_proxy_filter_type")
+  api_user_flows           api_user_flows?         @relation(fields: [api_user_flow_id], references: [api_user_flow_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_api_user_flows")
+}
+
+model api_user_flows {
+  api_user_flow_id  Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(50)
+  match_path        String              @unique @db.VarChar(255)
+  created_at        DateTime            @db.Timestamp(6)
+  last_updated      DateTime            @db.Timestamp(6)
+  api_proxy_id      Int?
+  api_proxy_filters api_proxy_filters[]
+  api_proxies       api_proxies?        @relation(fields: [api_proxy_id], references: [api_proxy_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_api_proxies")
+}

@@ -9,7 +9,10 @@ var logger = require('./logger');
 
 class ApiRouter {
 	constructor(apiProxiesConfig) {
-		this.apiProxies = {};
+		// TODO: this should be changed to always retrieving the latest copy from the RDBMS. 
+		// TODO: Would need to refactor to use apiproxydao to getAllProxies and also fetch one proxy
+		// TODO: Would need to change logic in getApiProxy(basePath) so it performs a DB operation to match the basePath
+		this.apiProxies = {}; 
 		// loop through all the api proxies and create an APIProxy object
 		apiProxiesConfig.forEach(apiProxyConfig => {
 			var apiProxy = new ApiProxy(apiProxyConfig);
@@ -27,6 +30,7 @@ class ApiRouter {
 	getApiProxy(basePath) {
 		// if the key matches the beginning of the basePath TODO: this will not work for all use cases
 		// TODO: update logic to use regex
+		// TODO: for real production usage this should be performinf this find against the RDBMS
 		return Object.values(this.apiProxies).find(apiProxy => {
 			const result = basePath.indexOf(apiProxy.getConfig().basePath) === 0;
 			logger.debug(`basePath ${basePath} apiProxy.basePath ${apiProxy.getConfig().basePath} result ${result}`);

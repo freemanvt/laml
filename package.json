@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "lint": "./node_modules/jshint/bin/jshint **/*js || true",
-    "test": "./node_modules/mocha/bin/mocha test/*.js",
-    "dev": "VVLOGGER=winston nodemon src/server.js"
+    "test": "jest --forceExit.",
+    "dev": "VVLOGGER=winston nodemon src/server.mjs",
+    "devnodb": "VVLOGGER=winston NO_DB=true nodemon src/server.mjs"
   },
   "repository": {
     "type": "git",
@@ -26,8 +27,11 @@
   "author": "Nai Vinh Ta",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^5.19.1",
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "ioredis": "^5.4.1",
+    "jest": "^29.7.0",
     "multer": "^1.1.0",
     "nodemon": "^3.1.4",
     "request": "^2.67.0",
@@ -37,6 +41,7 @@
     "chai": "^3.4.1",
     "jshint": "^2.9.1",
     "mocha": "^2.3.4",
+    "prisma": "^5.19.1",
     "supertest": "^1.1.0"
   },
   "engines": {
