@@ -1,4 +1,4 @@
-![build-test]
+![node-js]
 (https://github.com/freemanvt/laml/actions/workflows/node.js.yml/badge.svg)
 
 # LAML
