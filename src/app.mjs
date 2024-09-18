@@ -11,6 +11,7 @@ import logger from './lib/logger.js';
 import proxyDao from './lib/dao/apiproxydao.js';
 import redisClient from './lib/redishelper.js';
 import ApiError from './lib/ApiError.js';
+import admin from './routes/admin.js';
 
 const app = express();
 
@@ -28,6 +29,17 @@ const authenticateHeader = function (req, res, next) {
     next();
 };
 
+const addApiRouter = function(req, res, next) {
+	req.local = {
+		apiRouter
+	}
+	next();
+}
+
+// admin endpoints
+app.use('/admin/apiproxy', addApiRouter, admin);
+
+// api proxy endpoint
 app.use(async (req, res, next) => {
 	// get the path
 	logger.debug('basePath', req.path);
@@ -46,7 +58,6 @@ app.use(async (req, res, next) => {
 			logger.error('a', e);
 			next(e);
 		}
-		
 	}
 });
 

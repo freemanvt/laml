@@ -13,12 +13,28 @@ class ApiRouter {
 		// TODO: Would need to refactor to use apiproxydao to getAllProxies and also fetch one proxy
 		// TODO: Would need to change logic in getApiProxy(basePath) so it performs a DB operation to match the basePath
 		this.apiProxies = {}; 
+		this.load(apiProxiesConfig);
+	}
+
+	load(apiProxiesConfig) {
 		// loop through all the api proxies and create an APIProxy object
 		apiProxiesConfig.forEach(apiProxyConfig => {
 			var apiProxy = new ApiProxy(apiProxyConfig);
 			this.apiProxies[apiProxy.config.basePath] = apiProxy;
 			logger.info(`loaded api proxy [${apiProxy.config.name}], ${apiProxy.config.description}`);	
 		});
+	}
+
+	/**
+	 * crude implementation for adding new api proxy when they are created manually
+	 * TODO: implement proper solution
+	 * @param {*} apiProxiesConfig 
+	 */
+	reload(apiProxiesConfig) {
+		logger.debug('reloading api proxies')
+		logger.debug(apiProxiesConfig)
+		this.apiProxies = {}; 
+		this.load(apiProxiesConfig);
 	}
 
 	/**
