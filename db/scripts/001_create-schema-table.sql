@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS laml.api_proxy_filter_types (
 CREATE TABLE IF NOT EXISTS laml.api_user_flows (
   api_user_flow_id SERIAL PRIMARY KEY, 
   api_proxy_id INT,
-  name VARCHAR (50) UNIQUE NOT NULL, 
-  match_path VARCHAR (255) UNIQUE NOT NULL, 
+  name VARCHAR (50) NOT NULL, 
+  match_path VARCHAR (255) NOT NULL, 
   created_at TIMESTAMP NOT NULL, 
   last_updated TIMESTAMP NOT NULL,
   CONSTRAINT fk_api_proxies
